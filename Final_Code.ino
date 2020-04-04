@@ -81,23 +81,6 @@ void setup() {
   }
 } 
 
-void wheelR(){ 
-  cntR++; 
-  revoR = cntR/16.0; 
-  distR = revoR*3.25*2*3.1415; 
-  timeend = millis()/1000.0; 
-  veloR = distR/(deltaTime); 
-} 
-
-void wheelL(){ 
-  cntL++; 
-  revoL = cntL/16.0; 
-  distL = revoL*3.25*2*3.1415; 
-  timeend = millis()/1000.0; 
-  veloL = distL/(deltaTime); 
-} 
-
-
 void loop() { 
 
   currentTime = millis();   
@@ -141,6 +124,7 @@ void loop() {
   posz = newPosZ; 
 
 //########################################################################  
+// if statements and function implementations
   if (left bumber == hit){//If bumper hits adjust
     adjustRight();
   }
@@ -151,7 +135,7 @@ void loop() {
   if (posz >= 1 || IR beacon is at 0 meters){
       client.println(posx);
       client.println("/");
-      client.println(posy);//alert other robots 
+      client.println(posy);//alert other robots of its position 
       break; 
     }
 //If robot gets signal from other robot rotate and drive to location
@@ -190,9 +174,26 @@ void loop() {
   Serial.print(actualLeftSpeed); 
   Serial.print("\t");  
   Serial.println(actualRightSpeed); 
-//##############################################################  
+
   newTime = currentTime;    //Update time
 }                                    
+} 
+//#####################################################################
+//Functions utilized
+void wheelR(){ 
+  cntR++; 
+  revoR = cntR/16.0; 
+  distR = revoR*3.25*2*3.1415; 
+  timeend = millis()/1000.0; 
+  veloR = distR/(deltaTime); 
+} 
+
+void wheelL(){ 
+  cntL++; 
+  revoL = cntL/16.0; 
+  distL = revoL*3.25*2*3.1415; 
+  timeend = millis()/1000.0; 
+  veloL = distL/(deltaTime); 
 } 
 
 void adjustLeft(){
@@ -209,19 +210,32 @@ void adjustRight(){
   analogWrite(E2,10);
 }
 
-void rotate(int x, int y){
-  adjust to location x and y 
-  if right{
-  digitalWrite(M1, LOW); 
-  digitalWrite(M2, HIGH); 
-  analogWrite(E1,adjustSpeedx); 
-  analogWrite(E2,adjustSpeedy);
+void rotate(int x, int y, int adjustSpeed){
+  //adjust to be straight with home base coordinates 
+  
+  if (posx < x && posy < y){ //rotate quadrant 1 (+,+)
+    digitalWrite(M1, HIGH); //Left
+    digitalWrite(M2, LOW); //Right
+    analogWrite(E1,adjustSpeed); 
+    analogWrite(E2,adjustSpeed);
   }
-  if left{
-  digitalWrite(M1, HIGH); 
-  digitalWrite(M2, LOW); 
-  analogWrite(E1,adjustSpeedx); 
-  analogWrite(E2,adjustSpeedy);
+  if (posx > x && posy < y){//rotate quadrant 2  (-,+)
+    digitalWrite(M1, LOW); 
+    digitalWrite(M2, HIGH); 
+    analogWrite(E1,adjustSpeed); 
+    analogWrite(E2,adjustSpeed);
+  }
+  if (posx > x && posy > y){ //rotate quadrant 3  (-,-)
+    digitalWrite(M1, HIGH); 
+    digitalWrite(M2, LOW);
+    analogWrite(E1,adjustSpeed + 180 degrees speed); 
+    analogWrite(E2,adjustSpeed + 180 degrees speed);
+  }
+  if (posx < x && posy > y){//rotate quadrant 4  (+,-)
+    digitalWrite(M1, LOW); 
+    digitalWrite(M2, HIGH); 
+    analogWrite(E1,adjustSpeed + 180 degrees speed); 
+    analogWrite(E2,adjustSpeed + 180 degrees speed);
   }
 }
 

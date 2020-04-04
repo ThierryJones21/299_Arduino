@@ -131,8 +131,8 @@ void loop() {
   if (right bumber == hit){//If bumper hits adjust
     adjustLeft();
   }
-//If robot finds home base by accelerometer or IR beacon
-  if (posz >= 1 || IR beacon is at 0 meters){
+//If robot finds home base by accelerometer elevation of z coordinate 
+  if (posz >= 1){
       client.println(posx);
       client.println("/");
       client.println(posy);//alert other robots of its position 
@@ -228,22 +228,26 @@ void rotate(int x, int y, int adjustSpeed){
   if (posx > x && posy > y){ //rotate quadrant 3  (-,-)
     digitalWrite(M1, HIGH); 
     digitalWrite(M2, LOW);
-    analogWrite(E1,adjustSpeed + 180 degrees speed); 
-    analogWrite(E2,adjustSpeed + 180 degrees speed);
+    analogWrite(E1,(adjustSpeed + 75)); //180 degree speed 
+    analogWrite(E2,(adjustSpeed + 75));//180 degree speed 
   }
   if (posx < x && posy > y){//rotate quadrant 4  (+,-)
     digitalWrite(M1, LOW); 
     digitalWrite(M2, HIGH); 
-    analogWrite(E1,adjustSpeed + 180 degrees speed); 
-    analogWrite(E2,adjustSpeed + 180 degrees speed);
+    analogWrite(E1,(adjustSpeed + 75)); 
+    analogWrite(E2,(adjustSpeed + 75));
   }
 }
 
 void driveDistance(int distancexy){
-  digitalWrite(M1, LOW); 
-  digitalWrite(M2, HIGH); 
-  analogWrite(E1,10); 
-  analogWrite(E2,10);
+  distanceLeft = 0;
+  while(distancexy < distanceLeft){//drive until home base is reached
+      digitalWrite(M1, HIGH); 
+      digitalWrite(M2, HIGH); 
+      analogWrite(E1,50); //speed = 10 cm of distance
+      analogWrite(E2,50); 
+      distanceLeft += 10;
+  }
 }
 
 void forward(){ 
